@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WebMarks</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_add_new_webmark">New Webmark</string>
+    <string name="save_webmark_button">Save</string>
+    <string name="webmark_content_txt">Webmark Content</string>
+    <string name="empty_list">No Entries</string>
+</resources>
