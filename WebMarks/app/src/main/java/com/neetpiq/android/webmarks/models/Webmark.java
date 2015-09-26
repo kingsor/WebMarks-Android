@@ -1,5 +1,7 @@
 package com.neetpiq.android.webmarks.models;
 
+import org.json.JSONObject;
+
 import java.util.Date;
 
 /**
@@ -14,7 +16,15 @@ public class Webmark {
     private String mDescription;
     private String mMetadata;
 
+    public Webmark() {
+        init("");
+    }
+
     public Webmark(String url) {
+        init(url);
+    }
+
+    private void init(String url) {
         mId = -1;
         mInsertDate = new Date();
         mUrl = url;

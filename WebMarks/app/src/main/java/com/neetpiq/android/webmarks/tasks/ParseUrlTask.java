@@ -61,6 +61,8 @@ public class ParseUrlTask extends AsyncTask<String, Void, String> {
             Log.d(TAG, "Title [" + title + "]");
             jsonObj.put("title", title);
 
+            jsonObj.put("description", "n/a");
+
             JSONObject jsonMetadata = new JSONObject();
 
             // Get meta info
@@ -99,9 +101,14 @@ public class ParseUrlTask extends AsyncTask<String, Void, String> {
                 Log.d(TAG, key + ": " + value);
 
                 jsonMetadata.put(key, value);
+
+                if(key == "description") {
+                    jsonObj.put("description", value);
+                }
             }
 
             jsonObj.putOpt("metadata", jsonMetadata);
+
 
         }
         catch(Throwable t) {

@@ -3,6 +3,7 @@ package com.neetpiq.android.webmarks.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,12 @@ import com.neetpiq.android.webmarks.models.Webmark;
 import com.neetpiq.android.webmarks.tasks.ParseUrlTask;
 import com.neetpiq.android.webmarks.utils.ToastUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class NewWebmarkActivity extends ActionBarActivity {
+
+    public static final String TAG = "NewWebmarkActivity";
 
     private TextView textView;
 
@@ -34,11 +40,26 @@ public class NewWebmarkActivity extends ActionBarActivity {
             // Gets the database helper to access the database for the application
             DatabaseHelper database = new DatabaseHelper(NewWebmarkActivity.this);
 
-            // Create a webmark objetc
-            Webmark item = new Webmark("");
+            try {
+                // Create a webmark object
+                Webmark item = new Webmark();
 
-            //Insert the webmak in the database
-            database.insertWebMark(item);
+                JSONObject jsonObject = new JSONObject((String)textView.getText());
+
+                item.setUrl(jsonObject.getString("url"));
+                item.setTitle(jsonObject.getString("title"));
+                item.setDescription(jsonObject.getString("description"));
+                item.setMetadata(jsonObject.getString("metadata"));
+
+                //Insert the webmak in the database
+                database.insertWebMark(item);
+
+                ToastUtils.showToast(NewWebmarkActivity.this, "Saved to Webmarks");
+
+            } catch (Throwable ex) {
+                Log.e(TAG, "Error saving webmark", ex);
+                ToastUtils.showToast(NewWebmarkActivity.this, "Unable to save");
+            }
 
             finish();
         }
@@ -54,6 +75,13 @@ public class NewWebmarkActivity extends ActionBarActivity {
         // Sets the onClick method for the button that creates the project
         Button saveButton = (Button) this.findViewById(R.id.save_webmark);
         saveButton.setOnClickListener(mCreateProjectOnClickListener);
+
+        ParseUrlTask.ResponseCallback callback = new ParseUrlTask.ResponseCallback() {
+            @Override
+            public void processFinish(Object output) {
+                textView.setText((String) output);
+            }
+        };
 
         //get the received intent
         Intent receivedIntent = getIntent();
@@ -74,13 +102,6 @@ public class NewWebmarkActivity extends ActionBarActivity {
 
                 //check we have a string
                 if (receivedText != null) {
-
-                    ParseUrlTask.ResponseCallback callback = new ParseUrlTask.ResponseCallback() {
-                        @Override
-                        public void processFinish(Object output) {
-                            textView.setText((String) output);
-                        }
-                    };
 
                     ParseUrlTask task = new ParseUrlTask(this, callback);
 

@@ -4,17 +4,33 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
+import com.neetpiq.android.webmarks.DatabaseHelper;
 import com.neetpiq.android.webmarks.R;
+import com.neetpiq.android.webmarks.adapters.WebmarkCursorAdapter;
 import com.neetpiq.android.webmarks.utils.ToastUtils;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    private ListView mListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mListView = (ListView) findViewById(R.id.main_list);
+
+        // Gets the database helper to access the database for the application
+        DatabaseHelper database = new DatabaseHelper(this);
+
+        // Setup cursor adapter
+        WebmarkCursorAdapter webmarkAdapter = new WebmarkCursorAdapter(this, database.queryWebmarks());
+
+        // Attach cursor adapter to the ListView
+        mListView.setAdapter(webmarkAdapter);
     }
 
     @Override
