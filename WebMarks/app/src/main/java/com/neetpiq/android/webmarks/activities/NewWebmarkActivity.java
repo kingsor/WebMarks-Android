@@ -79,7 +79,15 @@ public class NewWebmarkActivity extends ActionBarActivity {
         ParseUrlTask.ResponseCallback callback = new ParseUrlTask.ResponseCallback() {
             @Override
             public void processFinish(Object output) {
-                textView.setText((String) output);
+
+                try {
+                    JSONObject jsonObject = new JSONObject((String)output);
+                    int indentSpaces = 2;
+                    textView.setText(jsonObject.toString(indentSpaces));
+                } catch (JSONException ex) {
+                    Log.e(TAG, "Error formatting json object", ex);
+                }
+
             }
         };
 

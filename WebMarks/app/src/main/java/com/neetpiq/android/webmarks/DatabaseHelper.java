@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = "DatabaseHelper";
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     // The name of the database file on the file system
     public static final String DATABASE_NAME = "webmarks.db";
@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_WEBMARKS = "tbl_webmarks";
 
     // Webmarks Table Columns names
-    private static final String KEY_ID = "id";
+    private static final String KEY_ID = "_id";
     private static final String KEY_DATE_CREATED = "date_created";
     private static final String KEY_URL = "url";
     private static final String KEY_TITLE = "title";
@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Creating Table
         db.execSQL("create table if not exists tbl_webmarks ("
-                + "id                  INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "_id                 INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "date_created        INTEGER,"
                 + "url                 TEXT,"
                 + "title	           TEXT,"
@@ -62,6 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // implement schema changes and data massage here when upgrading
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to version " + newVersion);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WEBMARKS);
+        onCreate(db);
     }
 
     /**
@@ -138,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public Webmark getWebmark() {
             if (isBeforeFirst() || isAfterLast())
                 return null;
-            Webmark webmark = new Webmark("");
+            Webmark webmark = new Webmark();
             webmark.setId(getLong(getColumnIndex(KEY_ID)));
             webmark.setInsertDate(new Date(getLong(getColumnIndex(KEY_DATE_CREATED))));
             webmark.setUrl(getString(getColumnIndex(KEY_URL)));

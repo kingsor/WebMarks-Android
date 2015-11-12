@@ -2,11 +2,16 @@ package com.neetpiq.android.webmarks.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.neetpiq.android.webmarks.DatabaseHelper;
+import com.neetpiq.android.webmarks.DatabaseHelper.*;
 import com.neetpiq.android.webmarks.R;
 import com.neetpiq.android.webmarks.adapters.WebmarkCursorAdapter;
 import com.neetpiq.android.webmarks.utils.ToastUtils;
@@ -15,6 +20,7 @@ import com.neetpiq.android.webmarks.utils.ToastUtils;
 public class MainActivity extends ActionBarActivity {
 
     private ListView mListView;
+    private WebmarkCursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +28,35 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mListView = (ListView) findViewById(R.id.main_list);
+        TextView emptyText = (TextView) findViewById(android.R.id.empty);
+        mListView.setEmptyView(emptyText);
 
         // Gets the database helper to access the database for the application
         DatabaseHelper database = new DatabaseHelper(this);
 
+        mCursor = database.queryWebmarks();
+
         // Setup cursor adapter
-        WebmarkCursorAdapter webmarkAdapter = new WebmarkCursorAdapter(this, database.queryWebmarks());
+        WebmarkCursorAdapter webmarkAdapter = new WebmarkCursorAdapter(this, mCursor);
 
         // Attach cursor adapter to the ListView
         mListView.setAdapter(webmarkAdapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ToastUtils.showToast(MainActivity.this, "Click ListItem Number " + position, ToastUtils.Duration.LONG);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mCursor.requery();
+        ((WebmarkCursorAdapter)mListView.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -51,8 +77,16 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             ToastUtils.showToast(getBaseContext(), "Settings item menu");
             return true;
+        } else if (id == R.id.action_refresh) {
+            onRefreshData();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onRefreshData() {
+        mCursor.requery();
+        ((WebmarkCursorAdapter)mListView.getAdapter()).notifyDataSetChanged();
     }
 }
