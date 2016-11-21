@@ -14,12 +14,14 @@ import java.util.Date;
 
 /**
  * This class helps open, create, and upgrade the database file containing the url list.
- *
+ * <p/>
  * Created by edoardo on 23/08/2015.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TAG = "DatabaseHelper";
+
+    private static DatabaseHelper mInstance = null;
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 2;
@@ -31,14 +33,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_WEBMARKS = "tbl_webmarks";
 
     // Webmarks Table Columns names
-    private static final String KEY_ID = "_id";
-    private static final String KEY_DATE_CREATED = "date_created";
-    private static final String KEY_URL = "url";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_METADATA = "metadata";
+    private static final String COL_ID = "_id";
+    private static final String COL_DATE_CREATED = "date_created";
+    private static final String COL_URL = "url";
+    private static final String COL_TITLE = "title";
+    private static final String COL_DESCRIPTION = "description";
+    private static final String COL_METADATA = "metadata";
 
-    public DatabaseHelper(Context context) {
+    /**
+     * Get the singleton instance
+     * @param ctx
+     * @return
+     */
+    public static DatabaseHelper getInstance(Context ctx) {
+        /**
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activity's
+         * context (see this article for more information:
+         * http://developer.android.com/resources/articles/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new DatabaseHelper(ctx.getApplicationContext());
+        }
+        return mInstance;
+    }
+
+    /**
+     * Constructor should be private to prevent direct instantiation.
+     * make call to static method "getInstance()" instead.
+     */
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -70,15 +94,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Inserting a new item in webmarks table checking if the url
      * already existed in database. If existed will update the old one else
      * creates a new row
-     * */
+     */
     public void insertWebMark(Webmark item) {
 
         ContentValues values = new ContentValues();
-        values.put(KEY_DATE_CREATED, item.getInsertDate().getTime());
-        values.put(KEY_URL, item.getUrl());
-        values.put(KEY_TITLE, item.getTitle());
-        values.put(KEY_DESCRIPTION, item.getDescription());
-        values.put(KEY_METADATA, item.getMetadata());
+        values.put(COL_DATE_CREATED, item.getInsertDate().getTime());
+        values.put(COL_URL, item.getUrl());
+        values.put(COL_TITLE, item.getTitle());
+        values.put(COL_DESCRIPTION, item.getDescription());
+        values.put(COL_METADATA, item.getMetadata());
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -89,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // site already existed update the row
             db.update(TABLE_WEBMARKS,
                     values,
-                    KEY_URL + " = ?",
+                    COL_URL + " = ?",
                     new String[]{String.valueOf(item.getUrl())});
         }
     }
@@ -97,15 +121,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public WebmarkCursor queryWebmarks() {
         // equivalent to "select * from webmarks order by date_created desc"
         Cursor wrapped = getReadableDatabase().query(TABLE_WEBMARKS,
-                null, null, null, null, null, KEY_DATE_CREATED + " desc");
+                null, null, null, null, null, COL_DATE_CREATED + " desc");
         return new WebmarkCursor(wrapped);
     }
 
     public WebmarkCursor queryWebmark(long id) {
         Cursor wrapped = getReadableDatabase().query(TABLE_WEBMARKS,
                 null, // all columns
-                KEY_ID + " = ?", // look for a werbmark ID
-                new String[]{ String.valueOf(id) }, // with this value
+                COL_ID + " = ?", // look for a werbmark ID
+                new String[]{String.valueOf(id)}, // with this value
                 null, // group by
                 null, // order by
                 null, // having
@@ -115,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Checking whether a webmark is already existing (check is done by matching url
-     * */
+     */
     public boolean isSiteExists(SQLiteDatabase db, String url) {
 
         Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_WEBMARKS
@@ -141,12 +165,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (isBeforeFirst() || isAfterLast())
                 return null;
             Webmark webmark = new Webmark();
-            webmark.setId(getLong(getColumnIndex(KEY_ID)));
-            webmark.setInsertDate(new Date(getLong(getColumnIndex(KEY_DATE_CREATED))));
-            webmark.setUrl(getString(getColumnIndex(KEY_URL)));
-            webmark.setTitle(getString(getColumnIndex(KEY_TITLE)));
-            webmark.setDescription(getString(getColumnIndex(KEY_DESCRIPTION)));
-            webmark.setMetadata(getString(getColumnIndex(KEY_METADATA)));
+            webmark.setId(getLong(getColumnIndex(COL_ID)));
+            webmark.setInsertDate(new Date(getLong(getColumnIndex(COL_DATE_CREATED))));
+            webmark.setUrl(getString(getColumnIndex(COL_URL)));
+            webmark.setTitle(getString(getColumnIndex(COL_TITLE)));
+            webmark.setDescription(getString(getColumnIndex(COL_DESCRIPTION)));
+            webmark.setMetadata(getString(getColumnIndex(COL_METADATA)));
 
             return webmark;
         }

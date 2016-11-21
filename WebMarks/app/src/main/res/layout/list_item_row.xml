@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="102dp"
-    android:background="@drawable/list_row_selector"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="@dimen/list_item_margin">
 
     <!-- URL Title -->
     <TextView
         android:id="@+id/webmark_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Post Title"
+        android:text="@string/post_title"
         android:textSize="@dimen/title"
         android:textStyle="bold" />
 
     <!-- URL Domain -->
     <TextView
         android:id="@+id/webmark_domain"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/webmark_title"
         android:layout_marginTop="1dip"
-        android:text="code.example.com"
-        android:textSize="@dimen/domain" />
+        android:gravity="start"
+        android:text="@string/post_domain"
+        android:textSize="@dimen/ins_date" />
 
     <!-- Release Year -->
     <TextView
         android:id="@+id/webmark_date_created"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:gravity="end"
+        android:text="@string/post_date"
         android:textColor="@color/ins_date"
-        android:text="29 lug 2015"
-        android:textSize="@dimen/ins_date" />
+        android:textSize="@dimen/ins_date"
+        android:textStyle="italic" />
 
 </RelativeLayout>

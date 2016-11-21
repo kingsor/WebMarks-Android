@@ -47,8 +47,10 @@ public class ParseUrlTask extends AsyncTask<String, Void, String> {
 
         try {
 
-            if(!UrlUtils.isValidUrlAndHostNotNull(url))
+            if(!UrlUtils.isValidUrlAndHostNotNull(url)) {
+                Log.d(TAG, "Invalid Url ...");
                 return "Invalid Url";
+            }
 
             Log.d(TAG, "Connecting to [" + url + "]");
             Document doc  = Jsoup.connect(url).userAgent("Mozilla").get();

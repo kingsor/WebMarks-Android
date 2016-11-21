@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,21 +22,13 @@ public class NewWebmarkActivity extends ActionBarActivity {
     public static final String TAG = "NewWebmarkActivity";
 
     private TextView textView;
+    private Button saveButton;
 
-    View.OnClickListener mCreateProjectOnClickListener = new View.OnClickListener() {
+    View.OnClickListener mOnSaveClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            // Get the values to save the webmark
 
-            /*
-            TextView projectNameView = (TextView)CreateProjectActivity.this.findViewById(R.id.create_project_name);
-            String projectName = projectNameView.getText().toString();
-
-            int rowCounterAmount = mRowCountersAmountView.getValue();
-            int rowsAmount = mRowsAmountView.getValue();
-            //*/
-
-            // Gets the database helper to access the database for the application
-            DatabaseHelper database = new DatabaseHelper(NewWebmarkActivity.this);
+            // Gets the database helper to access the dbHelper for the application
+            DatabaseHelper dbHelper = DatabaseHelper.getInstance(NewWebmarkActivity.this);
 
             try {
                 // Create a webmark object
@@ -52,7 +42,9 @@ public class NewWebmarkActivity extends ActionBarActivity {
                 item.setMetadata(jsonObject.getString("metadata"));
 
                 //Insert the webmak in the database
-                database.insertWebMark(item);
+                dbHelper.insertWebMark(item);
+
+//                dbHelper.close();
 
                 ToastUtils.showToast(NewWebmarkActivity.this, "Saved to Webmarks");
 
@@ -73,8 +65,8 @@ public class NewWebmarkActivity extends ActionBarActivity {
         textView = (TextView) findViewById(R.id.webmark_content);
 
         // Sets the onClick method for the button that creates the project
-        Button saveButton = (Button) this.findViewById(R.id.save_webmark);
-        saveButton.setOnClickListener(mCreateProjectOnClickListener);
+        saveButton = (Button) this.findViewById(R.id.save_webmark);
+        saveButton.setOnClickListener(mOnSaveClickListener);
 
         ParseUrlTask.ResponseCallback callback = new ParseUrlTask.ResponseCallback() {
             @Override
@@ -85,7 +77,9 @@ public class NewWebmarkActivity extends ActionBarActivity {
                     int indentSpaces = 2;
                     textView.setText(jsonObject.toString(indentSpaces));
                 } catch (JSONException ex) {
-                    Log.e(TAG, "Error formatting json object", ex);
+                    String msg = "Error formatting json object";
+                    textView.setText(msg);
+                    Log.e(TAG, msg, ex);
                 }
 
             }
@@ -96,9 +90,11 @@ public class NewWebmarkActivity extends ActionBarActivity {
 
         //get the action
         String receivedAction = receivedIntent.getAction();
+        Log.d(TAG, "Received action: [" + receivedAction + "]");
 
         //find out what we are dealing with
         String receivedType = receivedIntent.getType();
+        Log.d(TAG, "Received type: [" + receivedType + "]");
 
         //make sure it's an action and type we can handle
         if (receivedAction.equals(Intent.ACTION_SEND)) {
@@ -107,10 +103,12 @@ public class NewWebmarkActivity extends ActionBarActivity {
                 //handle sent text
                 //get the received text
                 String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
+                Log.d(TAG, "Received text: [" + receivedText + "]");
 
                 //check we have a string
                 if (receivedText != null) {
 
+                    textView.setText(receivedText);
                     ParseUrlTask task = new ParseUrlTask(this, callback);
 
                     task.execute(receivedText);
@@ -126,25 +124,4 @@ public class NewWebmarkActivity extends ActionBarActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_new_webmark, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

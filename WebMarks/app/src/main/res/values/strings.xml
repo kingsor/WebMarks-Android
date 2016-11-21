@@ -7,5 +7,18 @@
     <string name="title_activity_add_new_webmark">Add to Webmarks</string>
     <string name="save_webmark_button">Save</string>
     <string name="webmark_content_txt">Webmark Content</string>
-    <string name="empty_list">The list is empty</string>
+    <string name="empty_list">No webkmarks yet!</string>
+    <string name="title_activity_detail">Webmark Detail</string>
+    <string name="action_about">About</string>
+
+    <string name="loading">Loading&#8230;</string>
+
+    <!-- Error messages -->
+    <string name="error_generic">Sorry, an error occurred!</string>
+    <string name="error_connection">No internet connection detected</string>
+    <string name="try_again">Try again</string>
+    <string name="post_title">Post Title</string>
+    <string name="post_domain">code.example.com</string>
+    <string name="post_date">29 lug 2015</string>
+
 </resources>

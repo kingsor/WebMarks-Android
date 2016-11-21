@@ -1,5 +1,8 @@
 package com.neetpiq.android.webmarks.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -7,7 +10,7 @@ import java.util.Date;
 /**
  * Created by edoardo on 18/08/2015.
  */
-public class Webmark {
+public class Webmark implements Parcelable {
 
     private long mId;
     private Date mInsertDate;
@@ -80,4 +83,38 @@ public class Webmark {
     public void setMetadata(String metadata) {
         this.mMetadata = metadata;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mId);
+        dest.writeValue(this.mInsertDate);
+        dest.writeString(this.mUrl);
+        dest.writeString(this.mTitle);
+        dest.writeString(this.mDescription);
+        dest.writeString(this.mMetadata);
+    }
+
+    private Webmark(Parcel in) {
+        this.mId = in.readLong();
+        this.mInsertDate = (Date) in.readValue(Date.class.getClassLoader());
+        this.mUrl = in.readString();
+        this.mTitle = in.readString();
+        this.mDescription = in.readString();
+        this.mMetadata = in.readString();
+    }
+
+    public static final Parcelable.Creator<Webmark> CREATOR = new Parcelable.Creator<Webmark>() {
+        public Webmark createFromParcel(Parcel source) {
+            return new Webmark(source);
+        }
+
+        public Webmark[] newArray(int size) {
+            return new Webmark[size];
+        }
+    };
 }

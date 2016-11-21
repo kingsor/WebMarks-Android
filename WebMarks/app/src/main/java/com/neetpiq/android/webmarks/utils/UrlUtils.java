@@ -1,13 +1,18 @@
 package com.neetpiq.android.webmarks.utils;
 
 import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Created by edoardo on 29/08/2015.
  */
 public class UrlUtils {
+
+    public static final String TAG = "UrlUtils";
 
     /**
      *
@@ -15,7 +20,7 @@ public class UrlUtils {
      * @return domain of uri if available. Empty string otherwise.
      */
     public static String getDomainFromUrl(final String urlString) {
-        if (urlString != null) {
+        if (!TextUtils.isEmpty(urlString)) {
             Uri uri = Uri.parse(urlString);
             if (uri.getHost() != null) {
                 return uri.getHost();
@@ -46,13 +51,16 @@ public class UrlUtils {
     /**
      * returns false if the url is not valid or if the url host is null, else true
      */
-    public static boolean isValidUrlAndHostNotNull(String url) {
+    public static boolean isValidUrlAndHostNotNull(String urlString) {
         try {
-            URI uri = URI.create(url);
-            if (uri.getHost() == null) {
+            URL url = new URL(urlString);
+
+            if (TextUtils.isEmpty(url.getHost())) {
+                Log.d(TAG, "uri.getHost() is empty or null");
                 return false;
             }
-        } catch (IllegalArgumentException e) {
+        } catch (Exception ex) {
+            Log.e(TAG, "Error validating url", ex);
             return false;
         }
         return true;

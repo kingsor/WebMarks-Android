@@ -1,23 +1,24 @@
 package com.neetpiq.android.webmarks.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.neetpiq.android.webmarks.DatabaseHelper;
-import com.neetpiq.android.webmarks.DatabaseHelper.*;
+import com.neetpiq.android.webmarks.DatabaseHelper.WebmarkCursor;
 import com.neetpiq.android.webmarks.R;
 import com.neetpiq.android.webmarks.adapters.WebmarkCursorAdapter;
+import com.neetpiq.android.webmarks.models.Webmark;
 import com.neetpiq.android.webmarks.utils.ToastUtils;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private ListView mListView;
     private WebmarkCursor mCursor;
@@ -32,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
         mListView.setEmptyView(emptyText);
 
         // Gets the database helper to access the database for the application
-        DatabaseHelper database = new DatabaseHelper(this);
+        DatabaseHelper database = DatabaseHelper.getInstance(MainActivity.this);
 
         mCursor = database.queryWebmarks();
 
@@ -45,7 +46,18 @@ public class MainActivity extends ActionBarActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ToastUtils.showToast(MainActivity.this, "Click ListItem Number " + position, ToastUtils.Duration.LONG);
+                WebmarkCursor cursor = (WebmarkCursor)parent.getItemAtPosition(position);
+                Webmark item = cursor.getWebmark();
+
+//                String message = "Item on position: " + position;
+                if(item != null) {
+//                    message = item.getTitle();
+                    startActivity(ViewWebmarkActivity.getStartIntent(MainActivity.this, item));
+                }
+
+//                ToastUtils.showToast(MainActivity.this, message, ToastUtils.Duration.LONG);
+
+
             }
         });
 
@@ -75,10 +87,14 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            ToastUtils.showToast(getBaseContext(), "Settings item menu");
+            ToastUtils.showToast(getBaseContext(), "Settings View");
             return true;
         } else if (id == R.id.action_refresh) {
+            Toast.makeText(MainActivity.this, "Refreshing View", Toast.LENGTH_SHORT).show();
             onRefreshData();
+            return true;
+        } else if(id== R.id.action_about) {
+            ToastUtils.showToast(getBaseContext(), "About View");
             return true;
         }
 
