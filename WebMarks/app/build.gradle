@@ -2,20 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.1"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.neetpiq.android.webmarks"
         minSdkVersion 16
-<<<<<<< HEAD
-        targetSdkVersion 22
-        versionCode 3
-        versionName "0.3"
-=======
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
->>>>>>> deaea08ead5820a841e9b8e70866469837ab42e5
     }
     buildTypes {
         release {
@@ -27,12 +21,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-<<<<<<< HEAD
-    compile 'com.android.support:appcompat-v7:22.2.1'
-=======
     compile 'com.android.support:appcompat-v7:23.0.0'
->>>>>>> deaea08ead5820a841e9b8e70866469837ab42e5
     compile 'org.jsoup:jsoup:1.8.1'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:design:23.0.0'
 }
